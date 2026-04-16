@@ -13,6 +13,10 @@ const CONFIG = {
       name: "Nicaele",
       phone: "5586994228978",
     },
+    antonia: {
+      name: "Antonia",
+      phone: "5586998180799",
+    },
   },
 };
 
@@ -87,24 +91,29 @@ function sendToAppsScript(payload) {
     return Promise.resolve({ skipped: true });
   }
 
-  const body = new URLSearchParams(payload);
+  const query = new URLSearchParams(payload).toString();
+  const url = `${CONFIG.appsScriptUrl}?${query}`;
 
-  if (navigator.sendBeacon) {
-    const blob = new Blob([body.toString()], {
-      type: "application/x-www-form-urlencoded;charset=UTF-8",
-    });
-    const queued = navigator.sendBeacon(CONFIG.appsScriptUrl, blob);
-    return Promise.resolve({ queued });
+  if (window.fetch) {
+    return fetch(url, {
+      method: "GET",
+      mode: "no-cors",
+      cache: "no-store",
+      keepalive: true,
+    })
+      .then(() => ({ sent: true }))
+      .catch(() => {
+        const beaconImage = new Image();
+        beaconImage.referrerPolicy = "no-referrer-when-downgrade";
+        beaconImage.src = url;
+        return { fallback: true };
+      });
   }
 
-  return fetch(CONFIG.appsScriptUrl, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-    },
-    body,
-  }).catch(() => ({ failed: true }));
+  const beaconImage = new Image();
+  beaconImage.referrerPolicy = "no-referrer-when-downgrade";
+  beaconImage.src = url;
+  return Promise.resolve({ fallback: true });
 }
 
 function redirect(url) {
