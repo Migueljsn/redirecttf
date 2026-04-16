@@ -5,12 +5,12 @@ const CONFIG = {
     "Ol%C3%A1%21+Vim+do+link+de+atendimento+e+quero+mais+informa%C3%A7%C3%B5es.",
   fallbackSeller: "ana",
   sellers: {
-    ana: {
+    rafa: {
       name: "Rafa",
       phone: "5586995327646",
     },
-    bia: {
-      name: "Bia",
+    nicaele: {
+      name: "Nicaele",
       phone: "5586994228978",
     },
   },
